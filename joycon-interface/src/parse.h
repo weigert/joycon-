@@ -14,12 +14,13 @@ Different Joycon States:
 
 Options:
 
-  --find (find joycons via bluetooth)
-  --list (list all joycons that are connected or bound
-  --info (list a specific joycons data, color, ID, L / R, etc.)
+  Bluetooth Options:
+    --find (find joycons via bluetooth)
+    --connect [ID] (connect a joycon that isn't bluetooth bound yet)
+    --disconnect [ID] (disconnect a joycon that is bluetooth bound)
 
-  --connect (connect a joycon that isn't bluetooth bound yet)
-  --disconnect (disconnect a joycon that is bluetooth bound)
+    --list (list all joycons that are connected or bound
+    --info (list a specific joycons data, color, ID, L / R, etc.)
 
   Those steps can be skipped directly through the bluetooth thing
 
@@ -77,8 +78,11 @@ Open the Named Pipe!
 enum OptionFlag{
   NONE,
   UNKNOWN,
-  RUMBLE,
   FIND,
+  CONNECT,
+  DISCONNECT,
+
+  RUMBLE,
   BLINK
 };
 
@@ -117,25 +121,23 @@ bool optionCallback<RUMBLE>(std::vector<std::string> params){
 
 template<>
 bool optionCallback<FIND>(std::vector<std::string> params){
-  /* Do a Blink! */
-  std::cout<<"Called the FIND option!"<<std::endl;
-
   /* List all the bluetooth devices we can find! */
-
+  bluetooth::findJoycons();
   return true;
 }
 
-/*
+template<>
+bool optionCallback<CONNECT>(std::vector<std::string> params){
+  /* List all the bluetooth devices we can find! */
+  return bluetooth::connect(params[0]);
+}
 
-  First write an options parser.
+template<>
+bool optionCallback<DISCONNECT>(std::vector<std::string> params){
+  /* List all the bluetooth devices we can find! */
+  return bluetooth::disconnect(params[0]);
+}
 
-  The options parser will identify the flag that you set and execute the appropriate callback
-
-  Then we can execute arbitrary code based on flags that we set.
-
-  Once we have that, we can start opening pipes in the appropriate location and requesting information.
-
-*/
 
 /* An Option Struct */
 struct Option{
@@ -162,6 +164,28 @@ Option::Option(int argc, char* args[]){
   if(s == "--blink") ID = BLINK;
   else if(s == "--rumble") ID = RUMBLE;
   else if(s == "--find") ID = FIND;
+  else if(s == "--connect"){
+    ID = CONNECT;
+    //Check if we have an argument here!
+    if(argc == 3){
+      std::string p(args[2]);
+      params.push_back(p);
+    }
+    else{
+      params.push_back("");
+    }
+  }
+  else if(s == "--disconnect"){
+    ID = DISCONNECT;
+    //Check if we have an argument here!
+    if(argc == 3){
+      std::string p(args[2]);
+      params.push_back(p);
+    }
+    else{
+      params.push_back("");
+    }
+  }
   else ID = UNKNOWN;
 };
 
@@ -174,6 +198,10 @@ bool Option::execute(){
       return optionCallback<RUMBLE>(params);
     case FIND:
       return optionCallback<FIND>(params);
+    case CONNECT:
+      return optionCallback<CONNECT>(params);
+    case DISCONNECT:
+      return optionCallback<DISCONNECT>(params);
     default:
       return false;
   }

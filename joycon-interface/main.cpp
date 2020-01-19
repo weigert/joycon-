@@ -11,6 +11,7 @@ You can use this to do all kinds of stuff.
 
 */
 
+#include "src/bluetooth.h"
 #include "src/parse.h"
 #include "src/pipe.h"
 
