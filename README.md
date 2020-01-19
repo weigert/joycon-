@@ -1,4 +1,4 @@
-# joycon-
+# joycon++
 Unix joycon driver in C++ with simple command-line interface for communication and binding of actions.
 
 As there already exist joycon drivers for windows, this is only for unix.
