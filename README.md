@@ -8,7 +8,7 @@ I couldn't find a nicely interfaceable joycon driver for linux so I wrote this f
 ## How it Works
 
 ### C++ API
-A joycon driver in C++ can communicate with connected bluetooth devices by starting a joycon-server. 
+A joycon driver in C++ can communicate with connected bluetooth devices by starting a joycon-server.
 
 This server can be started from code, after which you can define your own button-press callbacks and have access to the raw joycon streaming data. You can also use code to send information to the joycons and set properties of the joycons from code.
 
@@ -36,6 +36,8 @@ Tested using g++ on Ubunutu 18.04 LTS.
 
 
 ## Questions
+
+You will find more information about the individual in their individual readme files.
 
 If you can't get it to work feel free to drop me a question. I am happy to help you out.
 
