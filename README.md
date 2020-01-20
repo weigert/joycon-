@@ -3,6 +3,19 @@ Joycon API / Driver for C++ on Unix. Example program with Joycon Mouse.
 
 There were already a few for windows, and no complete ones in C++, so I made this.
 
+## What can it do?
+
+Gives you a clean C++ interface for:
+- Binding / Unbinding bluetooth joycons into your C++ program
+- Streaming input data into an accessible data structure
+- An event queue triggered by bound-joycon button / joystick inputs
+- Altering player lights, home lights, sending vibrations
+- Read the joycon internal colors
+
+It can't:
+- Read IR Camera Data
+- Set the Joycon Internal Colors
+
 ## Usage
 
 Simply copy the `joycon-core` folder to your source and include `joycon-core.cpp`.
