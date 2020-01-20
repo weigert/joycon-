@@ -1,6 +1,5 @@
 #define MAX_EVENT_BUFFER 20
 
-
 enum eventType{
   EVENTTYPE_NONE,
   BUTTON_UP,
@@ -25,7 +24,6 @@ enum eventInput{
 };
 
 /* Event Storage! */
-
 struct event{
   //Easy Constructor!
   event(eventInput _input, eventType _type){

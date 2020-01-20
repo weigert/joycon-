@@ -1,65 +1,79 @@
-# joycon++
-Unix joycon driver in C++ with simple command-line interface for communication and binding of input actions.
+# joycon++ - Joycon C++ API
+Joycon API / Driver for C++ on Unix. Example program with Joycon Mouse.
 
-As there already exist joycon drivers for windows, this is only for unix.
+There were already a few for windows, and no complete ones in C++, so I made this.
 
-I couldn't find a nicely interfaceable joycon driver for linux so I wrote this for average users.
+## Usage
 
-## How it Works
+Simply copy the joycon-core folder to your source and include `joycon-core.cpp`.
 
-### C++ API
-The joycon API contains a joycon manager class. This manages the joycon communication.
-
-You can bind and unbind connected bluetooth devices if they are joycons.
-
-It keeps track of a vector of joycon datastructures, stores their relevant information, streams their inputs and keeps track of input events, which you can poll to trigger arbitrary code upon inputs.
-
-You can for instance define callbacks upon event triggering via joycon input.
-
-If you are interested in how the code works, I recommend looking at the raw joycon C++ API without all the other bells and whistles.
-
-## Server and Command-Line Tool
-The joycon server wraps the C++ API. It listens on a named pipe for user inputs through the command line tool, which allows for user-friendly interfacing with the API.
-
-The server will keep track of the joycon objects, lets you query it for information, set joycon information, bind and unbind the joycons, and profile the joycons using a config file.
-
-The profile will listen for input events and trigger arbitrary code (e.g. shell commands) or pre-defined callbacks (e.g. mouse movement for joysticks, scrolling, etc).
-
-You can query information such as batter state or joycon color, for use in other applications.
-
-## Polybar Widget
-The polybar widget will ping the server to see if it is online, and if it is will display all bound joycons in their respective colors and allow for simple binding and unbinding. This allows for easy management of your joycons. It will also display their battery state.
-
-## GUI Tool
-In the future, by interacting with the named pipes in the exact same way, you could actually make a simple unix based GUI tool. I'll see if I have time or motivation to do this.
-
-## Installation
+See the `README.md` file in `joycon-core` for more information on how it works.
 
 Tested using g++ on Ubunutu 18.04 LTS.
 
-## Compiling
+## Dependencies
 
-## Usage
-See the individual folders for usage information.
+Dependency:
 
-    joycon-api
+- libhidapi
 
-      Pure C++ Joycon-API, which lets you interface with the bluetooth devices.
+Installation:
 
-    joycon-server
+    sudo apt install libhidapi-dev
 
-      The joycon server. Simply launch the server and it will be listening for commandline input!
-      This can be launched as a daemon and then acts as a form of driver.
+Linking:
 
-    joycon-interface
+    -lhidapi-hidraw
 
-      The commandline tool with options. Use this to interface with the server.
+Check the makefile in the example for more info. This includes other linkage, e.g. pthread.
 
-## Questions
+## Example
 
-You will find more information about the individual in their individual readme files.
+I have written a simple example that lets you have your joycon act as a mouse. This requires that your computer runs using X server.
+
+### Dependencies
+
+Extra Dependency:
+
+- libxtst
+
+Installation:
+
+    sudo apt-get install libxtst-dev
+
+Linking:
+
+    -lX11 -lXtst
+
+### Building / Running
+Edit the MAC adress inside the code to your joycon, compile, run the program as super user and BOOM you got a joycon mouse.
+
+Build using the make file:
+
+    sudo make all
+
+Press the Home (screenshot) button to exit the program, Z-Trigger to click, joystick to move.
+
+## Other Remarks
 
 If you can't get it to work feel free to drop me a question. I am happy to help you out.
+
+This repo is based mostly off of the work of these fine people:
+
+    https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering
+
+    https://github.com/Armag3ddonDev/joycon
+
+I simply finished the button / joystick mapping, implemented the event system,
+and wrapped it so that joycons could be managed individually.
+
+I have sliced out some experimental features for cleanness, but might add them back as I am more happy with the structure and stability of the API and know how to incorporate it cleanly.
+
+If you would like to contribute or have suggestions on how this can be improved, please let me know.
+
+## To-Do
+
+Find a way to let this run as a daemon that we can communicate with, so I can query data and bind / release joycons at will through a separate commandline program. Then, make a nice polybar widget.
 
 ## License
 

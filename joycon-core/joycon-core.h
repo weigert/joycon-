@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <unordered_set>
 #include <limits>
-#include <signal.h>
 #include <cmath>
 #include <vector>
 #include <array>
@@ -31,27 +30,18 @@ Author: Nicholas McDonald
 
 */
 
-static sig_atomic_t volatile shutdown_flag = 0;
-static void SigCallback(int sig) {
-	shutdown_flag = 1;
-}
-
 class JoyconManager{
   public:
     //Initialize and Shutdown
     bool setup();
     void cleanup();
 
-    //Other Members!
+    //List Managed Joycons and Available Bluetooth Devices
     void list();
 
-    //Bind and Release Joycons
+    //Bind and Release Joycons from Management
     bool bind(std::string serial_number);
     bool release(std::string serial_number);
-
-    //Joycon Management...
-    void activate(Joycon *joycon);
-    void deactivate(Joycon *joycon);
 
     //Vector of Joycon Objects!
     std::vector<Joycon*> joycons;

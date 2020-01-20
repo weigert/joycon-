@@ -15,10 +15,7 @@ bool JoyconManager::setup(){
 		std::cerr << "HID initialization failed!" << std::endl;
 		return false;
 	}
-
-  signal(SIGINT , SigCallback);
-	signal(SIGTERM, SigCallback);
-
+  
   return true;
 }
 
@@ -29,6 +26,12 @@ void JoyconManager::cleanup(){
   //Shutdown HID
   hid_exit();
 }
+
+/*
+================================================================================
+															BIND AND RELEASE
+================================================================================
+*/
 
 //Bind a Specific Joycon
 bool JoyconManager::bind(std::string _serial){
@@ -107,6 +110,12 @@ bool JoyconManager::release(std::string _serial){
 	std::cout<<"Couldn't find bound joycon."<<std::endl;
 	return false;
 }
+
+/*
+================================================================================
+    															LIST
+================================================================================
+*/
 
 void JoyconManager::list(){
 	/* This should list all bound devices and then all available devices! */
