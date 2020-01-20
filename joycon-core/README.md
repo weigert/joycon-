@@ -2,6 +2,12 @@
 
 C++ API for streaming joycon inputs into an event queue / data structure and sending commands to joycons.
 
+## Usage
+
+Include `joycon-core.cpp` in your program. Make sure you link with `-lhidapi-hidraw` and have the library installed of course. Then create a JoyconManager object and initialize it.
+
+You can then use this to do all the stuff!
+
 ## Structure
 
 ### Joycon Manager
