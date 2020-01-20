@@ -1,83 +1,40 @@
 /*
-  Map Bluetooth Communication so you can store the buttons and positions
-  Can we also somehow store the IR camera information?
+ToDo:
+  Simple Interface for IR Camera Information
+  Write to SPI Flash for settings device colors
 
-  You then need a proper device driver style interface.
+  Joycon Pairing
+    -> Give each joycon a pointer to its paired joycon
+    -> Pairing joycons lets you map their inputs different?
+    -> There is really no benefit I think
 
-  This means you launch the code that can handle the inputs...
+  Give Joycons an ID for the Manager, for easier manipulation.
 
-  You should be able to hook up to the joycon normally using bluetooth.
+  Store the Joycon Color
 
-  Then you should be able to pair two joycons using a command too.
+  Query command for managed joycon objects
+    --list, etc.
 
-  Each joycon has a MAC number and an ID (0, 1, 2, etc.)
+  Commands to bind and unbind joycon objects
 
-  you can pair two joycons
+  Command to output the joycon data!
+    --data <color / battery>
 
-  Disconnect a joycon by its ID
+  Command to set the player number status
+    Maybe it by default sets them all to whatever index they are?
+    Pairing sets their lights accordingly
 
-  Maybe do this with named pipes?
+  Finally, you have access to the direct button states by setting up the API
 
-  You write the button state to files...
+  Joycons need a proper event managing system.
+  Joycons store their absolute state but also just events.
 
-  Or you send a command to get the button state.
+  The server will load binding config files to specific joycons
+  it will iterate over all joycons and poll for joycon events
 
-  If we store all the devices inside some folder structure then we can display them e.g. using polybar
+  It will then execute the code that is loaded for each joycon event!
 
-  having an icon depending on the color, disconnect, etc.
+  Certain event handlers can be pre-programmed!
 
-  Finally:
-
-  You need to have a good interface to do a number of things:
-
-  -> Execute arbitrary code by hooking into the device driver.
-
-  i.e. have some program managing the joycon connections and Communication...
-
-
-
-1. Connect the Device via bluetooth
-At this point, if the device could automatically find it's driver, or the driver automatically detects it and starts
-streaming the data, that would make sense. Then it interprets it and writes it to appropriate files
-
-Other programs can then stream the data to utilize it.
-
-Alternatively, you build an API system.
-
-but you really need to have a server running the joycons off first.
-
-Then you can build a small program that reads the data directly from the files,
-for instance for polybar.
-And that way you can have a disconnect button,
-a pairing function which remaps the inputs to some new structure
-
-
-How about:
-You launch a joycon manager server...
-This keeps track of joycon objects.
-
-You can query it with a number of commands...
-
-List all (checks your bluetooth connections for the devices)
-Get the batter status
-Set the home button status
-
-Pair joycons together, which changes their button mapping accordingly
-And additionally sets their lights
-
-Reads their current button states.
-
-How does this become an API tho?
-
-You should have a library that is a header.
-This header allows you to do a number of calls.
-
-You can setup a joycon and connect to the bluetooth socket once connected.
-Then by a number of calls you can get the current button data.
-
-To do this, we need to be streaming the data into some data structure.
-
-Uses libhid so that you can stream the data appropriately..
-stores it in some kind of joycon object.
-
+  
 */
