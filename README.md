@@ -5,7 +5,7 @@ There were already a few for windows, and no complete ones in C++, so I made thi
 
 ## Usage
 
-Simply copy the joycon-core folder to your source and include `joycon-core.cpp`.
+Simply copy the `joycon-core` folder to your source and include `joycon-core.cpp`.
 
 See the `README.md` file in `joycon-core` for more information on how it works.
 
