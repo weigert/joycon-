@@ -1,87 +1,41 @@
-/*
-
-Options parsing helper.
-
-This will identify a series of options...
-
-Then it will have a defined callback function once it has identified the correct command.
-
-Different Joycon States:
-
-  -> Not Connected (not connected via bluetooth)
-  -> Connected Via Bluetooth
-  -> Bound to the joycon server! (i.e. we are tracking their data)
-
-Options:
-
-  Bluetooth Options:
-    --find (find joycons via bluetooth)
-    --connect [ID] (connect a joycon that isn't bluetooth bound yet)
-    --disconnect [ID] (disconnect a joycon that is bluetooth bound)
-
-    --list (list all joycons that are connected or bound
-    --info (list a specific joycons data, color, ID, L / R, etc.)
-
-  Those steps can be skipped directly through the bluetooth thing
-
-  --bind (bind a joycon that is connected)
-  --unbind (unbind a joycon to the joycon manager)
-
-  --pair (pair two joycons manually)
-  --unpair (unpair a joycon and its partner)
-  --autopair (will wait for you to press the shoulder buttons)
-
-  --player (set the player number for a joycon or joycon pair)
-  --profile (bind the joycons button inputs to a specific profile from a config file)
-
-  Cosmetic Stuff:
-  --rumble (send a rumble to a specific joycon to test it)
-  --blink (send a quick homebutton blink to the joycon)
-
-  Settings:
-  --setcolor (set the joycons color)
-*/
 
 /*
-  Parse the Inputs for Valid Inputs
+  Author: Nicholas McDonald
 
-  Open the pipe and send the data to the server...
 
-  Wait for the servers response
+  Options Parse and Executor!
 
-  Display the information
-*/
 
-/*
-Pipe pipe;
-pipe.openPipe("/home/nick/test_pipe");
-
-if(argc < 2) return 0;
-pipe.writePipe(argv[1]);
-*/
-
-/*
-Open the Named Pipe!
-
-1. Parse the Inputs, make sure they are valid!!
-2. Communicate the Inputs to the Named Pipe
-3. Get the Response from the Server
-4. Display the Information
 */
 
 #include <vector>
 #include <string>
 #include <iostream>
+#include "pipe.h"
 
 
 /* All possible Option Flags!! */
 enum OptionFlag{
+  //These are dummies (but they work)!
   NONE,
   UNKNOWN,
+  HELP,
+
+  //Manage Bluetooth Connections
   FIND,
   CONNECT,
   DISCONNECT,
 
+  //These all work!
+  CLOSE,
+  PING,
+
+  //Manage Connected Joycons
+  LIST,
+  BIND,
+  UNBIND,
+
+  //
   RUMBLE,
   BLINK
 };
@@ -89,19 +43,35 @@ enum OptionFlag{
 /* Define the Option Callbacks (templated by their subcomand enum)! */
 template<OptionFlag F>
 bool optionCallback(std::vector<std::string> params){
-  std::cout<<"Specified OptionFlag does not exist."<<std::endl;
+  std::cout<<"Something has gone horribly wrong..."<<std::endl;
   return true;
 };
 
 template<>
 bool optionCallback<NONE>(std::vector<std::string> params){
-  std::cout<<"Please specify an option."<<std::endl;
+  std::cout<<"Please specify an option: joycon [flags]"<<std::endl;
   return true;
 };
 
 template<>
 bool optionCallback<UNKNOWN>(std::vector<std::string> params){
-  std::cout<<"Please specify an option."<<std::endl;
+  std::cout<<"Option is unknown. Please use the option --help for more information."<<std::endl;
+  return false;
+};
+
+template<>
+bool optionCallback<HELP>(std::vector<std::string> params){
+  std::cout<<std::endl<<"Joycon++ Commandline Interface Help"<<std::endl;
+  std::cout<<"Usage: joycon --subcommand [required] <optional>"<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<"Server Communication"<<std::endl;
+  std::cout<<"  --ping: Check if joycon-server is online."<<std::endl;
+  std::cout<<"  --close: Shutdown the joycon-server safely."<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<"Bluetooth Management"<<std::endl;
+  std::cout<<"  --find: Find available bluetooth joycons"<<std::endl;
+  std::cout<<"  --connect <ID>: Establish joycon bluetooth connection. If no ID specified, connects to all."<<std::endl;
+  std::cout<<"  --disconnect <ID>: Remove joycon bluetooth connection. If no ID specified, disconnects from all."<<std::endl<<std::endl;
   return true;
 };
 
@@ -121,23 +91,58 @@ bool optionCallback<RUMBLE>(std::vector<std::string> params){
 
 template<>
 bool optionCallback<FIND>(std::vector<std::string> params){
-  /* List all the bluetooth devices we can find! */
-  bluetooth::findJoycons();
-  return true;
+  /* Find any available Bluetooth Devices that are Joycons */
+  return bluetooth::findJoycons();
 }
 
 template<>
 bool optionCallback<CONNECT>(std::vector<std::string> params){
-  /* List all the bluetooth devices we can find! */
+  /* Connect to Bluetooth Devices that are Joycons */
   return bluetooth::connect(params[0]);
 }
 
 template<>
 bool optionCallback<DISCONNECT>(std::vector<std::string> params){
-  /* List all the bluetooth devices we can find! */
+  /* Disconnect from Bluetooth Devices that are Joycons */
   return bluetooth::disconnect(params[0]);
 }
 
+template<>
+bool optionCallback<CLOSE>(std::vector<std::string> params){
+  /* Send a --close command to the pipe! */
+  Pipe pipe("/home/nick/tos_pipe");
+  pipe.writePipe("--close");
+  return true;
+}
+
+template<>
+bool optionCallback<PING>(std::vector<std::string> params){
+  //Open the Pipe to Write Ping!
+  Pipe pipe("/home/nick/tos_pipe");
+  pipe.writePipe("--ping");
+
+  //Open the Reading Pipe!
+  pipe.closePipe();
+  pipe.openPipe("/home/nick/toc_pipe");
+
+  int tries = 15;
+  while(tries > 0){
+    //Check for a peek!
+    if(pipe.peek()){
+      pipe.readPipe();
+      std::cout<<pipe.buf<<std::endl;
+      return true;
+    }
+
+    //Wait and try again!
+    usleep(10000);
+    tries--;
+  }
+
+  //Dind't get what we wanted...
+  std::cout<<"...timed out..."<<std::endl;
+  return false;
+}
 
 /* An Option Struct */
 struct Option{
@@ -155,6 +160,7 @@ Option::Option(int argc, char* args[]){
   //Check for existing arguments
   if(argc < 2){
     ID = NONE;
+    return;
   }
 
   //Get the string from the first char...
@@ -164,6 +170,10 @@ Option::Option(int argc, char* args[]){
   if(s == "--blink") ID = BLINK;
   else if(s == "--rumble") ID = RUMBLE;
   else if(s == "--find") ID = FIND;
+  else if(s == "--close") ID = CLOSE;
+  else if(s == "--ping") ID = PING;
+  else if(s == "--help") ID = HELP;
+  else if(s == "--list") ID = LIST;
   else if(s == "--connect"){
     ID = CONNECT;
     //Check if we have an argument here!
@@ -192,17 +202,27 @@ Option::Option(int argc, char* args[]){
 bool Option::execute(){
   //Execute the Templated Callback Function!
   switch(ID){
+    case NONE:
+      return optionCallback<NONE>(params);
     case BLINK:
       return optionCallback<BLINK>(params);
+    case HELP:
+      return optionCallback<HELP>(params);
     case RUMBLE:
       return optionCallback<RUMBLE>(params);
     case FIND:
       return optionCallback<FIND>(params);
     case CONNECT:
       return optionCallback<CONNECT>(params);
+    case CLOSE:
+      return optionCallback<CLOSE>(params);
+    case PING:
+      return optionCallback<PING>(params);
     case DISCONNECT:
       return optionCallback<DISCONNECT>(params);
+    case LIST:
+      return optionCallback<LIST>(params);
     default:
-      return false;
+      return optionCallback<UNKNOWN>(params);
   }
 };

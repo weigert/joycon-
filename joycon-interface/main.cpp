@@ -1,6 +1,11 @@
 /*
 
+Author: Nicholas McDonald
+Date: 19.01.2020
+
+-----------------------------
 Joycon Command-Line Interface
+-----------------------------
 
 This program will communicate via named pipes with the joycon server.
 
@@ -13,7 +18,6 @@ You can use this to do all kinds of stuff.
 
 #include "src/bluetooth.h"
 #include "src/parse.h"
-#include "src/pipe.h"
 
 int main(int argc, char *argv[]) {
 

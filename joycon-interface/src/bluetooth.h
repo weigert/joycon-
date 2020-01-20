@@ -30,7 +30,7 @@ namespace bluetooth{
     findJoycons - List all identified blutooth objects that are joycons!!
   */
 
-  void findJoycons(){
+  bool findJoycons(){
     std::cout<<"Finding available joycons..."<<std::endl;
     bool found = false;
     int nfound = 0;
@@ -83,6 +83,7 @@ namespace bluetooth{
     else std::cout<<"Found ("<<nfound<<") joycons."<<std::endl;
     free( ii );
     close( sock );
+    return true;
   }
 
   /*

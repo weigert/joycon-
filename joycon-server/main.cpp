@@ -1,34 +1,55 @@
 /*
 
-Joycon C++ API Example Program!
-
-Joycon Core
+Joycon Server for Running an Instance of the Joycon C++ API,
+with callbacks for certain features and wrapping everything in a user friendly console program.
 
 */
+
+bool JOY_API_INIT(){
+  return true;
+}
+
+void JOY_API_SHUTDOWN(){
+}
+
+
+#include <string>
+#include <thread>
 #include "src/pipe.h"
 
 int main(int argc, char *argv[]) {
 
-  Pipe pipe;
-  pipe.openPipe("/home/nick/test_pipe");
-
-  while(true){
-    pipe.readPipe();
+  /* Construct a Joycon Manager Object */
+  if(!JOY_API_INIT()){
+    std::cout<<"Joycon API Initialization Failed. Exiting."<<std::endl;
+    return 0;
   }
 
-  /*
-  Launch a main loop and wait for commands.
+  //Communication Pathway
+  Pipe in_pipe("/home/nick/tos_pipe");
+  Pipe out_pipe("/home/nick/toc_pipe");
 
-  If joycons exist, then stream their information.
+  /* Main Server Loop */
+  bool shutdown = false;
+  while(!shutdown){
 
-  This program will be the most complex.
+    /* Check for Command Inputs */
+    if(in_pipe.peek()){
 
-  But we need to wait for inputs on the named pipe.
+      //Get Pipe Data!
+      in_pipe.readPipe();
+      std::string s(in_pipe.buf);
 
-  Then we can respond to inputs on the named pipe.
+      //Do something with Pipe Data...
+      if(s == "--close") shutdown = true;
+      if(s == "--ping") out_pipe.writePipe("PING");
+    }
 
-  This also needs to load profiles from files and bind them via callbacks.
-  */
+    //Sleep a bit...
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
 
+  //Close the Service!
+  JOY_API_SHUTDOWN();
   return 0;
 }
