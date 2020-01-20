@@ -1,5 +1,7 @@
 # joycon++ API
 
+C++ API for streaming joycon inputs into an event queue / data structure and sending commands to joycons.
+
 ## Structure
 
 ### Joycon Manager
@@ -30,4 +32,4 @@ Joycon objects have a few helper members that you can use to set their propertie
 
 ### Other Stuff
 
-Everything else are helper classes that you can feel free to peruse.
+Everything else are helper classes that you can feel free to peruse. These are useful for sending vibrations, settings home light blinking patterns, or the player light.
