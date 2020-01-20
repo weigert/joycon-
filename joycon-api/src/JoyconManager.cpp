@@ -81,7 +81,7 @@ bool JoyconManager::bind(std::string _serial){
 	std::wstring ws_pn(cur->product_string);
 	std::string pn(ws_pn.begin(), ws_pn.end());
 	joycon->name = pn;
-	joycons.push_back(joycon);
+	joycons.emplace_back(joycon);
 
 	/* Start Capturing Data and Send Command to set light! */
 	joycon->set_player_lights(P0_KEEP_ON);

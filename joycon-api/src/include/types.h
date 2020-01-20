@@ -1,11 +1,3 @@
-/*
-
-
-What does this file do??
-
-
-*/
-
 /* Button Data Struct stores Current Button Data! */
 struct buttonData{
 	/* Buttons */
@@ -45,7 +37,6 @@ std::ostream & operator << (std::ostream &out, const buttonData &d){
 		out << "JY" << d.yJoy <<" ";
     return out;
 }
-
 
 using byte = unsigned char;
 using ByteVector = std::vector<byte>;
@@ -259,6 +250,7 @@ struct TriggerButtonElapsedTime {
 
 // 'on' overrides 'flashing'. When on USB, flashing bits work like always on bits.
 enum PLAYER_LIGHTS {
+	LIGHTS_OFF = 0x00,
 	P0_KEEP_ON = 1 << 0,
 	P1_KEEP_ON = 1 << 1,
 	P2_KEEP_ON = 1 << 2,

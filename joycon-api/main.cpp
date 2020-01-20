@@ -27,37 +27,19 @@ int main(int argc, char *argv[]) {
   /* List all Available Joycon Devices! */
   manager.list();
   manager.bind("58:2f:40:6b:1a:43");
+
+  //Set the Home Light?
+  usleep(1E+7);
+  //HOME_LIGHT light;
+  //light.set_header(0xff, 0xff, 0xff, 0xff);
+  //manager.joycons[0]->set_home_light(light);
+  manager.joycons[0]->set_player_lights(P0_FLASH | P1_FLASH | P2_FLASH | P3_FLASH);
+
   //manager.bind("58:2f:40:6b:52:5e");
-  usleep(1E+8);
   //manager.release("58:2f:40:6b:52:5e");
   manager.release("58:2f:40:6b:1a:43");
 
-  /*
-
-  Connect to the Joycon Devices!
-
-  Start streaming their information!
-
-  Define callbacks for input events!
-
-  Use their data directly!
-
-  */
-
-  /*
-  JoyconVec joycons;
-  if (joycons.addDevices()   == -1) { hid_exit();  return 0; }
-  if (joycons.startDevices() == -1) { hid_exit();  return 0; };
-
-  //Send a rumble!
-  std::cout<<"Sending Rumble"<<std::endl;
-  Rumble rumble(200, 0.5);
-  joycons.vec[0]->send_rumble(rumble);
-
-  while (!shutdown_flag) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
-*/
+  /* Now I need to define callbacks! */
 
   //Shutdown the Joycon API!
   manager.cleanup();

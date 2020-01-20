@@ -30,9 +30,14 @@ bool Joycon::open(){
 }
 
 void Joycon::close(){
+	/* Sometimes this stops it from activating again? */
+	//set_player_lights(LIGHTS_OFF);
+
 	alive = false;
 	if (callback_thread.joinable())
 		callback_thread.join();
+
+	/* Shut off the Lights! */
 	hid_close(handle);
 }
 
@@ -82,10 +87,6 @@ void Joycon::callback() {
 
 		//Parse the Buffer
 		parseBuffer(buff_in);
-
-		/* Output the Input Data */
-	//	std::cout<<input<<std::endl;
-
 	}
 }
 

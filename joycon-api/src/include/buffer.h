@@ -32,18 +32,9 @@ public:
 	inline const byte* data() const { return buf.data(); }
 
 	const byte& get_ID() const;
-
 	const byte& get_timer() const;
-
 	POWER get_battery_level() const;
-
 	buttonData get_button_data(JOY_PID PID) const;
-
-	// get_left_analog_stick_data() const;
-
-	// get_right_analog_stick_data() const;
-
-	// get_vibrator_input_report() const;
 
 	// ID 21
 	const byte& get_ACK() const;

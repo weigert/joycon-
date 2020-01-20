@@ -7,8 +7,6 @@
 
 #define MAX_STR 255
 
-// #define ENABLE_UNTESTED
-
 class Joycon {
 
 public:
@@ -38,14 +36,6 @@ public:
 	POWER battery;
 
 	void parseBuffer(InputBuffer buf);
-	/*
-
-	buttonData parseBuffer(InputBuffer buf){
-		buttonData data;
-		return data;
-	};
-
-	*/
 
 	mutable std::mutex hid_mutex;
 
@@ -60,7 +50,7 @@ public:
 	// 0x02 - Same as 00. Active polling mode for IR camera data.For specific IR modes
 	// 0x23 - MCU update state report ?
 	// 0x30 - Standard full mode.Pushes current state @60Hz
-	// 0x31 - NFC / IR mode.Pushes large packets @60Hz
+	// 0x31 - NFC / IR mode. Pushes large packets @60Hz
 	// 0x33 - Unknown mode.
 	// 0x35 - Unknown mode.
 	// 0x3F - Simple HID mode.Pushes updates with every button press
